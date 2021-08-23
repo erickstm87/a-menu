@@ -158,7 +158,7 @@ class Appetizers extends Component {
 				
 				<Note />
 			</Paper>
-			<AppRouter />
+			{/* <AppRouter /> */}
 			
 			</MuiThemeProvider>
         )
