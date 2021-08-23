@@ -44,6 +44,7 @@ class Appetizers extends Component {
 				})
 				return x;
 			})
+			
 			.then((x) => {
 				x.map((element) => element.amount = 0);
 				this.setState({foodOrder: x, foodTemplate: x});
@@ -51,7 +52,6 @@ class Appetizers extends Component {
 	}
 	
     render(){
-		// const color = teal[200];
 		let newSum = 0.00;
 		let totalOrders = [];
 		let prices;
@@ -82,7 +82,7 @@ class Appetizers extends Component {
 			else if(whatToDo === 'decrease') {
 				if(this.state.orders.includes(element)) {
 					let newishArray = [...this.state.orders];
-					let index = newishArray.findIndex(x => x.title === element.title);
+					let index = newishArray.findIndex(x => x.name === element.name);
 					if(element.amount > 0){
 						element.amount -= 1;
 						newishArray.splice(index, 1);
@@ -96,7 +96,7 @@ class Appetizers extends Component {
 				return Number.isFinite(x) ? x : 0.00;
 			});
 			totalOrders = this.newOrder.map((element) => {
-				return element.title
+				return element.name
 			});
 
 			try {
@@ -107,12 +107,12 @@ class Appetizers extends Component {
 			catch(e){
 				newSum = 0.00;
 			}
-			
 			this.setState({
 				sum: parseFloat(newSum).toFixed(2),
 				orders: this.newOrder,
 				foodOrder: totalOrders
 			}, () => {
+				
 				let x = this.state.foodOrder;
 				let y = this.state.sum;
 				this.props.updateSum({x, y});
