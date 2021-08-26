@@ -7,8 +7,7 @@ import AppRouter from './Router';
 import Note from './Notes';
 import Names from './Name';
 import db from '../firebase/init';
-import { dbName } from '../firebase/init'
-import appMenu from '../data-store/App';
+import { docNames } from '../firebase/init'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -30,28 +29,65 @@ class Appetizers extends Component {
 			orders: [0.00],
 			added: false,
 			foodOrder: [''],
-			foodTemplate: ['']
+			courseHeader: [''],
+			counter: 0,
+			allMenu: []
 		}	
 		this.newOrder = [];
 	}
 
 	componentDidMount() {
-		db.collection(dbName).get()
+		let x = [];
+		let y = [];
+		let newDoc = [];
+		const courseHeader = (docNames) => {
+			let header;
+			switch (docNames) {
+				case 'drink-menu':
+					header = 'Drinks';
+					break;
+				case 'appetizer-menu':
+					header = 'Appetizers';
+					break;
+				case 'entree-menu':
+					header = 'Entrees';
+					break;
+				default:
+					break;
+			}
+			this.setState({counter: this.state.counter+=1}, () => {
+				y.push(header);
+			});
+			this.setState({courseHeader: y});
+		}
+		
+		for(const doc in docNames) {
+			let tempDocPort = [];
+			db.collection(docNames[doc]).get()
 			.then((snapshot) => {
-				let x = [];
 				snapshot.forEach((doc) => {
-					x.push(doc.data());
-				})
+					x.push(doc.data());	
+					tempDocPort.push(doc.data());
+				});
+				newDoc.push(tempDocPort)
+				this.setState({allMenu: newDoc});
 				return x;
 			})
-			
 			.then((x) => {
-				x.map((element) => element.amount = 0);
-				this.setState({foodOrder: x, foodTemplate: x});
+				for(let i = 0; i < this.state.allMenu.length; i++) {
+					this.setState(this.state.allMenu[i].map((element) => {
+						element.amount = 0;
+					}))
+				}
+				this.setState({foodOrder: x});				
+				
+				courseHeader(docNames[doc]);
 			})
+		}
 	}
 	
     render(){
+		
 		let newSum = 0.00;
 		let totalOrders = [];
 		let prices;
@@ -74,6 +110,7 @@ class Appetizers extends Component {
 			},
 		});
 
+		
 		const changeAmount = (whatToDo, element) => {
 			if(whatToDo === 'increase') {
 				element.amount += 1;
@@ -121,34 +158,28 @@ class Appetizers extends Component {
 		
         return(
 			<MuiThemeProvider theme={theme}>
-				<h1>Menu</h1>
-				<Names />
-            <Paper>
-				<Table >
-					<TableHead>
-					<TableRow>
-						<TableCell>Add/Subtract</TableCell>
-						<TableCell align="right">Item</TableCell>
-						<TableCell align="right">Description</TableCell>
-						<TableCell align="right">Price</TableCell>
-						<TableCell align="right">Quantity</TableCell>
-					</TableRow>
-					</TableHead>
-					<TableBody>
-					{this.state.foodTemplate.map((row, index) => (
-						<TableRow key={index}>
-						<TableCell component="th" scope="row" key={index}>
-						<Button variant="contained" onClick={(e) => changeAmount('increase', row, index, e)}>+</Button> <Button variant="contained" onClick={(e) => changeAmount('decrease', row, index, e)}>-</Button>
-						</TableCell>
-						<TableCell align="right">{row.name}</TableCell>
-						<TableCell align="right">{row.description}</TableCell>
-						<TableCell align="right">{row.price}</TableCell>
-						<TableCell align="right">{row.amount}</TableCell>
-						</TableRow>
-					))}	
-						
-					</TableBody>					
-				</Table>
+			<Names />
+            <Paper>	
+				{this.state.allMenu.map((element, index) => (
+				<div>
+					<h2 key={index+2}>{this.state.courseHeader[index]}</h2>
+					<Table key={index+1}>	
+						<TableBody key={index+3}>
+						{element.map((row, index) => (
+							<TableRow key={index}>
+								<TableCell component="th" scope="row" key={index}>
+								<Button variant="contained" onClick={(e) => changeAmount('increase', row, index, e)}>+</Button> <Button variant="contained" onClick={(e) => changeAmount('decrease', row, index, e)}>-</Button>
+								</TableCell>
+								<TableCell align="right">{row.name}</TableCell>
+								<TableCell align="right">{row.description}</TableCell>
+								<TableCell align="right">${row.price}</TableCell>
+								<TableCell align="right">{row.amount}</TableCell>				
+							</TableRow>	
+						))}	
+						</TableBody>			
+					</Table>
+				</div>
+				))}
 				<TextField
 					id="filled-adornment-amount"
 					variant="filled"
@@ -157,9 +188,7 @@ class Appetizers extends Component {
         		/>
 				
 				<Note />
-			</Paper>
-			{/* <AppRouter /> */}
-			
+			</Paper>			
 			</MuiThemeProvider>
         )
     }
