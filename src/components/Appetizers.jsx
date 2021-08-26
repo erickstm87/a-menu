@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { updateSum } from '../actions/actions';
-import AppRouter from './Router';
+// import AppRouter from './Router';
 import Note from './Notes';
 import Names from './Name';
 import db from '../firebase/init';
@@ -14,7 +14,7 @@ import TextField from '@material-ui/core/TextField';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
+// import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
@@ -41,7 +41,7 @@ class Appetizers extends Component {
 		let y = [];
 		let newDoc = [];
 		const courseHeader = (docNames) => {
-			let header;
+			let header, localCounter;
 			switch (docNames) {
 				case 'drink-menu':
 					header = 'Drinks';
@@ -55,7 +55,8 @@ class Appetizers extends Component {
 				default:
 					break;
 			}
-			this.setState({counter: this.state.counter+=1}, () => {
+			localCounter = this.state.counter;
+			this.setState({counter: localCounter+=1}, () => {
 				y.push(header);
 			});
 			this.setState({courseHeader: y});
@@ -75,9 +76,9 @@ class Appetizers extends Component {
 			})
 			.then((x) => {
 				for(let i = 0; i < this.state.allMenu.length; i++) {
-					this.setState(this.state.allMenu[i].map((element) => {
-						element.amount = 0;
-					}))
+					this.setState(this.state.allMenu[i].map((element) => (
+						element.amount = 0
+					)))
 				}
 				this.setState({foodOrder: x});				
 				
@@ -161,13 +162,13 @@ class Appetizers extends Component {
 			<Names />
             <Paper>	
 				{this.state.allMenu.map((element, index) => (
-				<div>
-					<h2 key={index+2}>{this.state.courseHeader[index]}</h2>
+				<div key={index*9}>
+					<h2 key={index}>{this.state.courseHeader[index]}</h2>
 					<Table key={index+1}>	
-						<TableBody key={index+3}>
+						<TableBody key={index+2}>
 						{element.map((row, index) => (
-							<TableRow key={index}>
-								<TableCell component="th" scope="row" key={index}>
+							<TableRow key={index*8}>
+								<TableCell component="th" scope="row" key={index*12}>
 								<Button variant="contained" onClick={(e) => changeAmount('increase', row, index, e)}>+</Button> <Button variant="contained" onClick={(e) => changeAmount('decrease', row, index, e)}>-</Button>
 								</TableCell>
 								<TableCell align="right">{row.name}</TableCell>
