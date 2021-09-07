@@ -92,6 +92,18 @@ class Appetizers extends Component {
 		let newSum = 0.00;
 		let totalOrders = [];
 		let prices;
+		const nameStyle = {
+		    "width": "25%"
+		};
+		const buttonStyle = {
+			"width": "20%"
+		}
+		const descriptionStyle ={ 
+		    "width": "42.5%"
+		}
+		const priceStyle = {
+			"width": "12.5%"
+		}
 
 		const theme = createMuiTheme({
 			typography: {
@@ -168,13 +180,13 @@ class Appetizers extends Component {
 						<TableBody key={index+2}>
 						{element.map((row, index) => (
 							<TableRow key={index*8}>
-								<TableCell component="th" scope="row" key={index*12}>
-								<Button variant="contained" onClick={(e) => changeAmount('increase', row, index, e)}>+</Button> <Button variant="contained" onClick={(e) => changeAmount('decrease', row, index, e)}>-</Button>
+								<TableCell style={buttonStyle} component="th" scope="row" key={index*12}>
+								<Button  variant="contained" onClick={(e) => changeAmount('increase', row, index, e)}>+</Button> <Button variant="contained" onClick={(e) => changeAmount('decrease', row, index, e)}>-</Button>
 								</TableCell>
-								<TableCell align="right">{row.name}</TableCell>
-								<TableCell align="right">{row.description}</TableCell>
-								<TableCell align="right">${row.price}</TableCell>
-								<TableCell align="right">{row.amount}</TableCell>				
+								<TableCell style={nameStyle}>{row.name}</TableCell>
+								<TableCell style={descriptionStyle} align="left">{row.description}</TableCell>
+								<TableCell style={priceStyle} align="left">${row.price}</TableCell>
+								<TableCell align="left">{row.amount}</TableCell>				
 							</TableRow>	
 						))}	
 						</TableBody>			
