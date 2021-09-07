@@ -104,6 +104,12 @@ class Appetizers extends Component {
 		const priceStyle = {
 			"width": "12.5%"
 		}
+		const menuStyle = {
+			"name": "viewport",
+  			"minimum-scale": "1", 
+			"initial-scale": "1", 
+			"width":" device-width"
+		}
 
 		const theme = createMuiTheme({
 			typography: {
@@ -172,7 +178,7 @@ class Appetizers extends Component {
         return(
 			<MuiThemeProvider theme={theme}>
 			<Names />
-            <Paper>	
+            <Paper style={menuStyle}>	
 				{this.state.allMenu.map((element, index) => (
 				<div key={index*9}>
 					<h2 key={index}>{this.state.courseHeader[index]}</h2>
